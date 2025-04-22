@@ -9,9 +9,11 @@
 
 ---
 
-## 📽 Demo video
+## 📽 Demo video
 
-<video src="../docs/demo_obj_select.mp4" controls width="600"></video>
+<video src="../docs/demo_obj_select.mp4?raw=true" controls width="600">
+  Your browser can’t play this video.
+</video>
 
 ---
 

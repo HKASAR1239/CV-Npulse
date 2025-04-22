@@ -11,6 +11,15 @@ Wave your hand under a camera, get the gesture (✊ ROCK / ✋ PAPER / ✌️�
 
 * **rpc_mit.py** – same UI as `rps_cam.py` but with an enhanced “Iocaine‑lite” coach inspired by the MIT winning algorithm (1999 RoShamBo competition)
 
+
+---
+
+## 📽 Demo GIF
+![Demo animation](../docs/demo_rpc.gif)
+
+
+
+---
 ## 1 · Features
 
 | Component          | Description                                                                  |

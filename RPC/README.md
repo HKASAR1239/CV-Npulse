@@ -125,4 +125,4 @@ python rps_cam.py --width 640 --height 480 # Pi Camera or USB webcam
 
 ## AUTHORS
 
-Gabriel Taïeb and Darius Giannoli
+Darius Giannoli and Gabriel Taïeb  

@@ -1,104 +1,128 @@
-# ArUco Object‑Selection Demo
+# Rock‑Paper‑Scissors CV (Npulse)
 
-<p align="center">
-  <!-- Replace preview.gif with an actual GIF or screenshot of your app -->
-  <img src="doc/preview.gif" width="600" alt="Screen capture of the selection demo" />
-</p>
+Real‑time hand‑gesture recognition with an AI “prediction”.  
+Wave your hand under a camera, get the gesture (✊ ROCK / ✋ PAPER / ✌️ SCISSORS) and a suggested counter‑move calculated in real time.
 
-> **Goal** – Point your finger -here we use a ruler- (with an **ArUco ID 10** marker) at one among many objects (with **ArUco IDs**) and the application instantly tells you which object is selected.
+* **rps_cam.py** – manual mode  
+  *Press **Space** or click **Start round** to trigger a 3‑2‑1 countdown.*
 
----
+* **rpc_auto.py** – fully automatic loop  
+  *The countdown starts automatically, shows a recommendation for 2 s and restarts.*
 
-## 📽 Demo video
+* **rpc_mit.py** – same UI as `rps_cam.py` but with an enhanced “Iocaine‑lite” coach inspired by the MIT winning algorithm (1999 RoShamBo competition)
 
-<!--
-Replace the YouTube link—or the relative path if you keep the video in the repo—once you have recorded your demo.
+## 1 · Features
 
-Example 1 : Link to YouTube (recommended)
-[![Watch the video](doc/demo_thumbnail.png)](https://youtu.be/XXXXXXXXXXX)
+| Component          | Description                                                                  |
+|--------------------|------------------------------------------------------------------------------|
+| **MediaPipe Hands**| Fast 21‑landmark hand tracking on CPU (≈ 60 FPS on Apple M‑series).          |
+| **Gesture logic**  | Heuristic finger‑count → ROCK / PAPER / SCISSORS.                            |
+| **Markov coach**   | Learns \(P(\text{next}\mid\text{current})\) online and suggests the beat‑move.|
+| **Iocaine‑lite**   | 18 meta‑strategies (Freq, Last, Markov 1 × second‑guessing) with exponential scoring.|
+| **PySimpleGUI**    | Cross‑platform GUI; single window with live video, countdown and hints.      |
+| **Countdown**      | 3‑2‑1 overlay, result freeze, automatic restart (in `rpc_auto.py`).          |
+| **Raspberry Pi 5** | Works on aarch64; ~25 FPS at 640×480 with Pi camera or USB webcam.           |
+| **Intel RealSense**| Optional support – pass `--realsense` flag (only in `rps_cam.py`).           |
 
-Example 2 : Local MP4 (GitHub renders it inline)
-<video src="doc/demo.mp4" controls width="600"></video>
--->
+<br>
 
-*Add your demo video link or embed code here.*
+## 2 · Folder layout
 
----
+```
+rpc/
+├── requirements.txt      # Python wheels (CPU only)
+├── setup_rps.sh          # one‑shot installer for macOS (Homebrew + pyenv + venv)
+├── rps_cam.py            # manual countdown + Markov coach
+├── rpc_auto.py           # auto‑loop countdown + Markov coach
+├── rpc_mit.py            # manual countdown + Iocaine‑lite coach
+└── setup/                # (optional) RealSense / Pi specific notes
+```
 
-## Hardware & materials
+> All scripts run on **macOS Sequoia / Apple Silicon** and **Raspberry Pi 5** without modification.
 
-| Item | Details |
-|------|---------|
-| **Camera** | Any 720 p+ webcam works. |
-| **Ruler / Pointer** | Any stick ‑‑ glue **ArUco ID 10** on the pointing end. |
-| **Objects** | n objects with markers **IDs 1 → n** . |
-| **Printer** | To print the markers (4×4 dictionary). |
-| Good lighting | Minimises false detections. |
+<br>
 
----
-
-## Quick start
+## 3 · Quick start (macOS, Apple Silicon)
 
 ```bash
-# 1  Clone & prepare virtual‑env
-source aruco_env/bin/activate  # Windows : aruco_env\Scripts\activate
-pip install --upgrade pip
-pip install opencv-python opencv-contrib-python numpy
+git clone <your‑repo‑url> && cd rpc
 
-# 2  Run the live demo
-python main.py                # opens a window with live video
+# one‑shot installer – creates ~/.pyenv Python, venv & installs wheels
+chmod +x setup_rps.sh
+./setup_rps.sh
+
+# activate the virtual‑env
+source venv/bin/activate
+
+# manual mode (press Space each round)
+python rps_cam.py
+
+# fully automatic loop
+python rpc_auto.py
+
+# MIT‑style coach (manual trigger)
+python rpc_mit.py
 ```
----
 
-## File structure
+<br>
 
+## 4 · Quick start (Raspberry Pi 5, 64‑bit)
+
+```bash
+sudo apt update && sudo apt install python3-venv python3-opencv
+python3 -m venv venv && source venv/bin/activate
+
+pip install -r requirements.txt            # mediapipe wheels exist for aarch64
+
+python rps_cam.py --width 640 --height 480 # Pi Camera or USB webcam
 ```
-.
-├── aruco_env        # venv with necessary dependencies
-├── main.py          # real‑time selection logic (no camera calibration)
-└── README.md        # you are here
-```
 
----
+<br>
 
-## How it works (TL;DR)
+## 5 · Command‑line options
 
-1. **Detect all markers** every frame with OpenCV’s `cv2.aruco.detectMarkers()`.
-2. Compute the **centre** `O` and **X‑axis direction** `u` of the ruler marker 10.
-3. For every object marker `i` (ID 1‑n):
-   * project its centre vector on `u` → distance **along** the ray.
-   * compute the perpendicular distance → **angle** (tanθ).
-4. Keep objects with angle `< ±12 °`, pick the **closest** along the ray ⇒ selected.
-5. **Hysteresis (2 frames)** keeps the label stable if the ruler jiggles.
+| Option                    | Default | Description                                |
+|---------------------------|---------|--------------------------------------------|
+| `--camera <index>`        | `0`     | OpenCV device index (0, 1, …)              |
+| `--backend avf` (macOS)   | `any`   | Force AVFoundation backend                 |
+| `--width <px>` `--height` | 1280×720| Capture resolution                         |
+| `--realsense`             | off     | Use Intel RealSense D435i (only rps_cam.py)|
 
-See comments inside `main.py` for full maths.
+*On Raspberry Pi you can stick to 640×480 for best FPS.*
 
----
+<br>
 
-## Parameters you can tweak
+## 6 · How the algorithms work
 
-| Variable | Default | Effect |
-|----------|---------|--------|
-| `CONE_DEG` | `12` | Width of the selection cone (degrees). |
-| `HOLD_FRAMES` | `2` | Frames that a new object must be seen before switch. Lower = more reactive. |
-| `DIR_THR_DEG` | `4` | If the ruler rotates > this angle, we skip `HOLD_FRAMES` and switch instantly. |
+### Markov 1 (default)
 
----
+1. Keep a 3×3 matrix *C* where `C[i,j]` counts transitions *i → j*  
+   (*i,j* ∈ {ROCK, PAPER, SCISSORS}).  
+2. At each round, predict the most likely *next* gesture from the last one.  
+3. Suggest the move that beats that prediction.
 
-## Troubleshooting
+### Iocaine‑lite (MIT)
 
-* **Markers detected but nothing selected** : check that marker 10 is *not* listed in `OBJ_IDS`, adjust `CONE_DEG` (wider) or move the camera closer.
-* **Selection flickers** : raise `HOLD_FRAMES` or lower `DIR_THR_DEG`.
+* 3 basic predictors  
+  * global frequency, last‑move repeat, Markov 1*  
+* For each, 6 meta‑strategies (beat / copy / lose × instant / 1‑step lag).  
+* Exponential scoring (α ≈ 0.97) picks the best meta every round.  
+* Typical win rate vs humans **55–60 %** (vs 45–50 % for simple Markov).
 
----
+<br>
 
-## License
+## 7 · Troubleshooting
 
-MIT
+| Problem / Symptom                                      | Fix |
+|--------------------------------------------------------|-----|
+| “`Camera grab failed`”                                 | Make sure no other app is using the webcam, or try `--camera 1` / `--backend avf` (macOS). |
+| PySimpleGUI raises `tkinter`‑related errors            | Run `brew install tcl-tk`, then use `setup_rps.sh` which compiles Python with Tk. |
+| Landmarks appear but gesture is **UNKNOWN**            | Ensure all 5 fingers are plainly visible; use brighter light; reduce resolution to 640×480. |
+| Always suggests **PAPER**                              | Use the fixed `rpc_auto.py` (tie‑break logic); or switch to `rpc_mit.py`. |
 
----
+<br>
 
-### Authors
 
-Gabriel Taïeb and Darius Giannoli – *Feel free to open an issue or pull‑request!*
+## AUTHORS
 
+Gabriel Taïeb and Darius Giannoli

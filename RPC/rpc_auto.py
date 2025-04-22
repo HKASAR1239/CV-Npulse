@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""
-rps_cam_auto.py – détection R‑P‑S + coach Markov 1 amélioré (auto‑loop)
-------------------------------------------------------------------------
-Boucle : 3‑2‑1 → détection → reco (2 s) → 3‑2‑1 …
-"""
-
 import argparse, sys, time, random
 import cv2, numpy as np, mediapipe as mp, PySimpleGUI as sg
 

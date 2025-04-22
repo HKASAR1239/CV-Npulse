@@ -11,17 +11,7 @@
 
 ## 📽 Demo video
 
-<!--
-Replace the YouTube link—or the relative path if you keep the video in the repo—once you have recorded your demo.
-
-Example 1 : Link to YouTube (recommended)
-[![Watch the video](doc/demo_thumbnail.png)](https://youtu.be/XXXXXXXXXXX)
-
-Example 2 : Local MP4 (GitHub renders it inline)
-<video src="doc/demo.mp4" controls width="600"></video>
--->
-
-*Add your demo video link or embed code here.*
+<video src="doc/my_demo.mp4" controls width="600"></video>
 
 ---
 

@@ -9,9 +9,8 @@
 
 ---
 
-## 📽 Demo video
-
-![demo](../docs/demo_obj_select.mp4?raw=true)
+## 📽 Demo GIF
+![Demo animation](../docs/demo_objsel.gif)
 
 
 

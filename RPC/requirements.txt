@@ -1,0 +1,5 @@
+opencv-python>=4.8
+mediapipe>=0.10.19        # API sans use_tflite
+numpy>=1.26
+# RealSense uniquement quand tu passeras sur le D435i
+pyrealsense2 ; platform_system!="Darwin"

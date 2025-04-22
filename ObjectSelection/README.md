@@ -10,7 +10,13 @@
 ---
 
 ## 📽 Demo video
-![demo](../docs/demo_obj_select.mp4)
+
+<video controls width="640"
+       src="https://raw.githubusercontent.com/CV-Npulse/main/docs/demo_obj_select.mp4">
+Sorry, your browser can’t play this video.  
+Download it [here](https://raw.githubusercontent.com/CV-Npulse/main/docs/demo_obj_select.mp4).
+</video>
+
 
 ---
 

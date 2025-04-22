@@ -11,7 +11,7 @@
 
 ## 📽 Demo video
 
-<video src="doc/my_demo.mp4" controls width="600"></video>
+<video src="../docs/demo_obj_select.mp4" controls width="600"></video>
 
 ---
 

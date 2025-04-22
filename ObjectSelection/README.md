@@ -10,10 +10,7 @@
 ---
 
 ## 📽 Demo video
-
-<video src="../docs/demo_obj_select.mp4?raw=true" controls width="600">
-  Your browser can’t play this video.
-</video>
+![demo](../docs/demo_obj_select.mp4)
 
 ---
 

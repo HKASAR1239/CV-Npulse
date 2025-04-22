@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Sélection ultra‑réactive d'objets ArUco par pointeur (2‑D).
-• règle  : ID 10
-• objets : IDs 1‑4
-• iPhone Continuity  → backend AVFoundation
+Ultra-reactive ArUco object selection by pointer (2D).
+• Ruler: ID 10
+• Objects: IDs 1-4 (here but can extends to n)
+• iPhone Continuity → AVFoundation backend
 """
 
 import cv2, numpy as np, math, time
 
 # ────────── CONFIG ──────────
 POINTER_ID       = 10
-OBJ_IDS          = [1, 2, 3, 4]
-CONE_DEG         = 12        # demi‑ouverture du cône
-HOLD_FRAMES      = 2         # nb d’images pour confirmer un nouveau candidat
-DIR_THR_DEG      = 4         # Δangle règle > 4° ⇒ switch immédiat
+OBJ_IDS          = [1, 2, 3, 4] #can extends to n
+CONE_DEG         = 12        # Half-angle of the cone
+HOLD_FRAMES      = 2         # Number of frames to confirm a new candidate
+DIR_THR_DEG      = 4         # Ruler angle change > 4° ⇒ immediate switch
 DEBUG            = False
 # ────────────────────────────
 
@@ -29,16 +29,16 @@ DETP  = cv2.aruco.DetectorParameters()
 
 cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)
 if not cap.isOpened():
-    raise SystemExit("Caméra inaccessible")
+    raise SystemExit("Camera inaccessible")
 
 tan_cone  = math.tan(math.radians(CONE_DEG))
 cos_dir   = math.cos(math.radians(DIR_THR_DEG))
 bary      = lambda p: p.mean(axis=0)
 log       = print if DEBUG else lambda *a, **k: None
 
-# État
+# State
 cur_id, cand_id, cand_cnt = None, None, 0
-prev_dir = None           # dernière direction (vecteur unitaire)
+prev_dir = None           # Last direction (unit vector)
 
 while True:
     ok, frame = cap.read()
@@ -52,7 +52,7 @@ while True:
         ids = ids.flatten()
         ctrs = {i: bary(c[0]) for i,c in zip(ids, corners)}
 
-        # ───── règle ─────
+        # ───── Ruler ─────
         if POINTER_ID in ctrs:
             pc = corners[list(ids).index(POINTER_ID)][0]
             O  = ctrs[POINTER_ID]
@@ -60,10 +60,10 @@ while True:
             n  = np.linalg.norm(u)
             if n > 5:
                 u /= n
-                # changement de direction ?
+                # Direction change?
                 if prev_dir is not None:
                     if np.dot(u, prev_dir) < cos_dir:     # > DIR_THR_DEG
-                        cand_cnt = HOLD_FRAMES            # force switch immédiat
+                        cand_cnt = HOLD_FRAMES            # Force immediate switch
                 prev_dir = u.copy()
 
                 ray_len = int(np.hypot(H,W))
@@ -71,7 +71,7 @@ while True:
                     tip = np.clip((O+s*u*ray_len).astype(int), (0,0), (W-1,H-1))
                     cv2.line(frame,O.astype(int),tip,c,w,cv2.LINE_AA)
 
-                # ───── premier objet dans le cône ─────
+                # ───── First object in the cone ─────
                 best_proj, best_id = 1e9, None
                 for oid in OBJ_IDS:
                     if oid not in ctrs: continue
@@ -83,7 +83,7 @@ while True:
                         best_proj, best_id = proj, oid
                 cand_now = best_id
 
-        # dessin
+        # Drawing
         if ids is not None:
             for i,c in zip(ids,corners):
                 clr = CLR_SEL if i==cur_id else CLR_OBJ
@@ -91,7 +91,7 @@ while True:
                 cx,cy = ctrs[i].astype(int)
                 cv2.putText(frame,str(i),(cx-10,cy+10),FONT,0.7,clr,2,cv2.LINE_AA)
 
-    # ───── hystérèse ultra‑courte ─────
+    # ───── Ultra-short hysteresis ─────
     if cand_now is None or cand_now==cur_id:
         cand_id, cand_cnt = None, 0
     else:
@@ -103,7 +103,7 @@ while True:
         else:
             cand_id, cand_cnt = cand_now, 1
 
-    # ───── bannière ─────
+    # ───── Banner ─────
     cv2.rectangle(frame,(0,0),(W,BANNER_H),(0,0,0),-1)
     label = f"Object selected  →  {cur_id if cur_id else '---'}"
     size,_ = cv2.getTextSize(label,FONT,FSCALE,THICK)

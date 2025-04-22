@@ -45,7 +45,7 @@ rpc/
 ## 3 · Quick start (macOS, Apple Silicon)
 
 ```bash
-git clone <[your‑repo‑url](https://github.com/DariusGiannoli/CV-Npulse.git)> && cd rpc
+git clone https://github.com/DariusGiannoli/CV-Npulse.git && cd rpc
 
 # one‑shot installer – creates ~/.pyenv Python, venv & installs wheels
 chmod +x setup_rps.sh

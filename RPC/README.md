@@ -66,7 +66,7 @@ source venv/bin/activate
 # manual mode (press Space each round)
 python rps_cam.py
 
-# fully automatic loop
+#starting pose to start the countdown (rock over paper)
 python rpc_auto.py
 
 # MIT‑style coach (manual trigger)

@@ -1,0 +1,29 @@
+# Default parameters for every stage of the pipeline
+sor:
+  k: 30          # number of neighbours
+  std_ratio: 1.5 # points further than mu + std_ratio * sigma are removed
+
+ror:
+  nb_points: 3   # minimum neighbours inside radius
+  radius: 0.02   # metres
+
+voxel:
+  size: 0.005    # metres (5 mm)
+
+plane:
+  eps: 0.01            # RANSAC distance threshold (m)
+  ransac_n: 3          # points per iteration
+  iterations: 1000     # max number of iterations
+
+crop:
+  enabled: false
+  min: [-inf, -inf, -inf]
+  max: [inf,  inf,  inf]
+
+cluster:
+  enabled: true
+  eps: 0.02           # 2 cm between neighbours
+  min_points: 1000    # discard tiny clusters
+
+normals:
+  k: 30

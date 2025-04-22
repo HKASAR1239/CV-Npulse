@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Rock‑Paper‑Scissors – Countdown coach
+Rock‑Paper‑Scissors
 -------------------------------------
-• Compte à rebours 3‑2‑1 déclenché par Espace ou bouton Start
-• Détecte le geste (Rock/Paper/Scissors) juste après '1'
-• Recommande le meilleur coup (IA Markov de premier ordre)
-• Boucle : attente -> countdown -> résultat -> attente...
+• Countdown (Space or Start)
+• Detects (Rock/Paper/Scissors) just after '1'
+• Recommand the best move (first order Markov Chain)
+• loop : wait -> countdown -> resukt -> wait...
 """
 
 import argparse, sys, time

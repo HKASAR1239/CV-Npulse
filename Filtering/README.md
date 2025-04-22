@@ -121,5 +121,5 @@ MIT License © 2025 — feel free to use, modify and distribute. Give credit w
 
 ---
 ## Authors
-Darius Giannoli and Gabriel Taieb
+Darius Giannoli and Gabriel Taïeb
 

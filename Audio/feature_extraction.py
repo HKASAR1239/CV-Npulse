@@ -1,31 +1,36 @@
 # feature_extraction.py
+"""
+Feature-extraction helpers converting raw 16-bit PCM audio to MFCC tensors.
+"""
+
+from __future__ import annotations
+
+import numpy as np
 import torch
 import torchaudio
-import numpy as np
+from torchaudio.transforms import MFCC
 
-def extract_mfcc_from_bytes(audio_bytes, sample_rate=16000, n_mfcc=13):
-    """
-    Convert raw 16-bit PCM audio bytes to MFCC features.
-    Returns a tensor of shape (1, n_mfcc, time).
-    """
-    # Convert raw bytes to a NumPy array (float32) and normalize to [-1,1]
+
+def _bytes_to_tensor(audio_bytes: bytes) -> torch.Tensor:
+    """Convert raw 16-bit PCM bytes to a (1, samples) float32 tensor."""
     audio_np = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32)
-    if np.max(np.abs(audio_np)) != 0:
-        audio_np = audio_np / np.max(np.abs(audio_np))
-    # Convert to a Torch tensor and add channel dimension: (1, num_samples)
-    waveform = torch.from_numpy(audio_np).unsqueeze(0)
-    
-    # Define the MFCC transform (adjust parameters as needed)
-    mfcc_transform = torchaudio.transforms.MFCC(
+    if (peak := np.abs(audio_np).max()) > 0:
+        audio_np /= peak
+    return torch.from_numpy(audio_np).unsqueeze(0)  # (1, N)
+
+
+def extract_mfcc(
+    audio_bytes: bytes,
+    sample_rate: int = 16_000,
+    n_mfcc: int = 13,
+    *,
+    device: torch.device | str | None = None,
+) -> torch.Tensor:
+    """Return an ``(1, n_mfcc, time)`` MFCC tensor on the requested *device*."""
+    waveform = _bytes_to_tensor(audio_bytes)
+    mfcc = MFCC(
         sample_rate=sample_rate,
         n_mfcc=n_mfcc,
-        melkwargs={
-            "n_fft": 400,
-            "hop_length": 160,
-            "n_mels": 40,
-            "center": False,
-            "power": 2.0,
-        }
-    )
-    mfcc = mfcc_transform(waveform)  # shape: (1, n_mfcc, time)
-    return mfcc
+        melkwargs=dict(n_fft=400, hop_length=160, n_mels=40, center=False, power=2.0),
+    )(waveform)
+    return mfcc.to(device) if device else mfcc

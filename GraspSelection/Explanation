@@ -1,1 +1,17 @@
-Grasp selection for cylindrical objects
+Type of grasp and objects: 
+
+- Cylinder: water bottles, thermos cups, cans 
+  - Cylindrical: body 
+  - Pinch: top
+  - Hook: handle
+
+- Globe:	oranges/apples, small balls
+  - Spherical: body
+
+- Cuboid:	rectangular boxes, bricks, cartons
+  - Lumbrical: anywhere
+  - Pinch: 
+
+- Tablet: (flat rectangular plate)	thin books, cardboard sheets, dinner plates
+  - Lumbrical
+  - Pinch

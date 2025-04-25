@@ -99,4 +99,4 @@ Contributions & issues are welcome – feel free to open a PR!
 
 ---
 ## Authors
-Gabriel Taieb & Darius Giannoli
+Darius Giannoli & Gabriel Taieb

@@ -8,10 +8,6 @@ Type of grasp and objects:
 - Globe:	oranges/apples, small balls
   - Spherical: body
 
-- Cuboid:	rectangular boxes, bricks, cartons
+- Cuboid/Tablet: rectangular boxes, books, ...
   - Lumbrical: anywhere
   - Pinch: 
-
-- Tablet: (flat rectangular plate): thin books, cardboard sheets, dinner plates
-  - Lumbrical
-  - Pinch

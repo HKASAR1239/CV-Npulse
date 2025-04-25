@@ -91,5 +91,5 @@ MIT
 
 ### Authors
 
-Gabriel Taïeb and Darius Giannoli – *Feel free to open an issue or pull‑request!*
+Darius Giannoli and Gabriel Taieb
 
